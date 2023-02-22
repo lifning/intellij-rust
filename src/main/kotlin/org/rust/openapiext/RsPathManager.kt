@@ -23,12 +23,15 @@ object RsPathManager {
             SystemInfo.isLinux || isWslToolchain -> "linux" to INTELLIJ_RUST_NATIVE_HELPER
             SystemInfo.isMac -> "macos" to INTELLIJ_RUST_NATIVE_HELPER
             SystemInfo.isWindows -> "windows" to "$INTELLIJ_RUST_NATIVE_HELPER.exe"
-            else -> return null
+            SystemInfo.isFreeBSD -> "freebsd" to INTELLIJ_RUST_NATIVE_HELPER
+            SystemInfo.isSolaris -> "illumos" to INTELLIJ_RUST_NATIVE_HELPER
+            SystemInfo.isUnix -> "unix" to INTELLIJ_RUST_NATIVE_HELPER
+            else -> "unknown" to INTELLIJ_RUST_NATIVE_HELPER
         }
         val arch = when {
             CpuArch.isIntel64() -> "x86-64"
             CpuArch.isArm64() -> "arm64"
-            else -> return null
+            else -> System.getProperty("os.arch")
         }
 
         val nativeHelperPath = pluginDir().resolve("bin/$os/$arch/$binaryName").takeIf { Files.exists(it) } ?: return null
